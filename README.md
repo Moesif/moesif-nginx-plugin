@@ -1,52 +1,71 @@
-# Moesif Nginx module
+# Moesif NGINX module
 
-Native plugin for Nginx module to monitor, analyze api traffic in Moesif advanced analytics platform
-
+Native plugin for Nginx module to monitor, analyze API traffic in Moesif advanced analytics platform
 
 ## How it works?
 
-This low overhead module captures api request/response headers and body and periodically posts to moesif servers. Module provides several options, explained below,
-to be able to choose which api's data is captured and what part of api headers/body can be sent to Moesif.
+This low overhead module captures API request/response headers and body and periodically posts to Moesif  servers. The module provides several options, explained below,
+to be able to choose which API's data is captured and what part of API headers/body can be sent to Moesif.
 
----
+## How to install
 
-# Quickstart
+### 1. Install the Moesif module
 
 Download pre-build binaries from [Releases](https://github.com/Moesif/moesif-nginx-plugin/tree/master/modules/),
-place them into `./modules` sub-directory of `nginx`.
+place them into `./modules` sub-directory of `nginx`. 
 
-Assuming standard nginx plus deployment, create a symlink for the module as shown below.
+Assuming standard NGINX plus deployment, create a symlink for the module as shown below.
 
 ```
 sudo ln -s /etc/nginx/modules/ngx_moesif_http_filter_module_1.19.0.so /etc/nginx/modules/ngx_http_moesif_filter_module.so
 ```
+### 2. Edit your `nginx.conf`
 
-Add following lines at the beginning of `nginx.conf`:
+Add the following line at the beginning of `nginx.conf`
+_If you're unsure of the installation path, you can find it via: `find / -name "moesif" -type d`.
 
-```
+```nginx
 load_module modules/ngx_http_moesif_filter_module.so;
 ```
 
-Reload nginx config with `nginx -s reload`. *Done!*
+Also, edit your `nginx.conf` file to add the Moesif Plus plugin:
+
+```nginx
+http{
+    moesif  on;
+    moesif_application_id your-moesif-application-id
+    ...
+    server {
+        server_name acmeinc.com;
+        
+        location /api {
+            proxy_pass 127.0.0.1:8080
+        }
+    }
+}
+```
+
+### 3. Reload NGINX
+
+Reload the NGINX config with the command `nginx -s reload`
 
 *Alternatively, you can install this module manually with the Nginx source, see the [installation instructions](#Installation)*
 
----
 
-# Configuration
+## Configuration
 
-Edit your nginx.conf.
+You can modify your configuration to install on specific services or to add additional data to the logged API calls such as User Id or Metadata.
 
 Example:
 
 ```nginx
 http{
-    # turn on moesif function
+    # turn on Moesif  function
     moesif  on;
-    moesif_application_id  your-application-id;  # required field
-    moesif_sync_interval 1;  # optional field to configure how often api data is sent, defaults to 2 seconds
-    moesif_events_cache_size 50;  # optonal field to configure events cache size, defaults to 25
-    moesif_metadata type http;    # optional metadatta
+    moesif_application_id  your-moesif-application-id;  # required field
+    moesif_sync_interval 1;  # optional field to configure how often API data is sent, defaults to 2 seconds
+    moesif_events_cache_size 50;  # optional field to configure events cache size, defaults to 25
+    moesif_metadata type http;    # optional metadata
     ...
     server {
         server_name example.com;
@@ -64,7 +83,7 @@ http{
         }
         
         location /loc2 {
-            moesif  off;  # moesif disabled. No api events captured at this location  
+            moesif  off;  # moesif disabled. No API events captured at this location  
             ...
      
         }
@@ -117,7 +136,7 @@ moesif_sync_interval
 
 **context:** *http*
 
-Specifies the interval events are synced to moesif.  Defaults to 2 seconds.
+Specifies the interval events are synced to Moesif.  Defaults to 2 seconds.
 
 moesif
 --------------------
@@ -127,7 +146,7 @@ moesif
 
 **context:** *http, server, location*
 
-Enables/Disables sending api data to Moesif at Main, Server or particular location level. Location level configuration takes precedence to Server level configuration. Similarly Server level configuration takes precedence to Main level configuration
+Enables/Disables sending API data to Moesif at Main, Server or particular location level. Location level configuration takes precedence to Server level configuration. Similarly Server level configuration takes precedence to Main level configuration
 
 moesif_skip_body
 --------------------
@@ -147,7 +166,7 @@ moesif_user_id_header
 
 **context:** *http, server, location*
 
-if set, module extracts header_name from api headers and uses that as 'user' of the api request. header_name could 
+if set, module extracts header_name from API headers and uses that as 'user' of the API request. header_name could 
 be request or response header. Response headers are matched first and its case in sensitive
 
 moesif_company_id_header
@@ -158,7 +177,7 @@ moesif_company_id_header
 
 **context:** *http, server, location*
 
-if set, module extracts header_name from api headers and uses that as 'company' of the api request. header_name could 
+if set, module extracts header_name from API headers and uses that as 'company' of the API request. header_name could 
 be request or response header. Response headers are matched first and its case in sensitive
 
 moesif_api_version_header
@@ -169,7 +188,7 @@ moesif_api_version_header
 
 **context:** *http, server, location*
 
-if set, module extracts header_name from api headers and uses that as 'api_version' of the api request. header_name could 
+if set, module extracts header_name from API headers and uses that as 'api_version' of the API request. header_name could 
 be request or response header. Response headers are matched first and its case in sensitive
 
 moesif_api_weight
@@ -180,7 +199,7 @@ moesif_api_weight
 
 **context:** *http, server, location*
 
-This directive can be used to set weight of api request at location/server/global level
+This directive can be used to set weight of API request at location/server/global level
 
 moesif_metadata
 --------------------
@@ -190,7 +209,7 @@ moesif_metadata
 
 **context:** *http, server, location*
 
-Additional metadata can be configured with this directive to send as part of api metadata. Metadata configured at higher levels is inherited
+Additional metadata can be configured with this directive to send as part of API metadata. Metadata configured at higher levels is inherited
 
 # Advanced customization
 
@@ -211,7 +230,7 @@ company id can be set in company->data after extracting it from ngx_http_request
 
 ngx_http_moesif_get_api_version(ngx_http_request_t *r, ngx_str_t *api_version)
 -------------------------------------------------------------------------------
-Api version of equest can be set in api_version->data after extracting it from ngx_http_request_t
+API version of equest can be set in api_version->data after extracting it from ngx_http_request_t
 
 ngx_http_moesif_get_metadata(ngx_http_request_t *r, ngx_http_moesif_map_t *metadata, ngx_pool_t *pool)
 --------------------------------------------------------------------------------------------------------
@@ -225,11 +244,11 @@ in [ngx_http_moesif_event.h](https://github.com/Moesif/ngx_http_moesif_filter_mo
 
 
 ---
-## Installation
+## Build from source
 
 ### Step 1
 
-There are several ways to integrate moesif module into NGINX.
+There are several ways to integrate Moesif module into NGINX.
 
 * Download pre-build binaries from [Releases](https://github.com/Moesif/ngx_http_moesif_filter_module/releases). Or
 
@@ -262,12 +281,8 @@ load_module modules/ngx_http_moesif_filter_module.so;
 
 ```
 http {
-  moesif        on;
+  moesif                  on;
   moesif_application_id   your-application-id;
   ...
 }
 ```
-
-## TODO
-1) Add support for gzipping before sending events to moesif
-2) Add support for dynamic sampling
