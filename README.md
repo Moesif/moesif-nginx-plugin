@@ -12,8 +12,14 @@ to be able to choose which api's data is captured and what part of api headers/b
 
 # Quickstart
 
-Download pre-build binaries from [Releases](https://github.com/Moesif/moesif-nginx-plugin/modules/),
+Download pre-build binaries from [Releases](https://github.com/Moesif/moesif-nginx-plugin/tree/master/modules/),
 place them into `./modules` sub-directory of `nginx`.
+
+Assuming standard nginx plus deployment, create a symlink for the module as shown below.
+
+```
+sudo ln -s /etc/nginx/modules/ngx_moesif_http_filter_module_1.19.0.so /etc/nginx/modules/ngx_http_moesif_filter_module.so
+```
 
 Add following lines at the beginning of `nginx.conf`:
 
