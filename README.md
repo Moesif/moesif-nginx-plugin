@@ -49,7 +49,7 @@ http{
 
 Reload the NGINX config with the command `nginx -s reload`
 
-*Alternatively, you can install this module manually with the Nginx source, see the [installation instructions](#Installation)*
+*Alternatively, you can install this module manually with the Nginx source, see the [installation instructions](#build-from-source)*
 
 
 ## Configuration
