@@ -1,10 +1,12 @@
 # Moesif NGINX module
 
-Native plugin for Nginx module to monitor, analyze API traffic in Moesif advanced analytics platform
+Native NGINX module written in C to monitor and analyze API traffic in Moesif advanced analytics platform
+
+> This C module is for advanced use cases. Moesif recommends the [Lua plugin](https://www.moesif.com/docs/server-integration/nginx-openresty/) for both Open Source and Plus variants.
 
 ## How it works?
 
-This low overhead module captures API request/response headers and body and periodically posts to Moesif  servers. The module provides several options, explained below,
+This low overhead module captures API request/response headers and body and periodically posts to Moesif servers. The module provides several options, explained below,
 to be able to choose which API's data is captured and what part of API headers/body can be sent to Moesif.
 
 ## How to install
